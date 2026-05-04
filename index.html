@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>BOBSYS - 홈페이지</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <aside class="sidebar">
+        <nav class="menu-overlay">
+            <a href="index.html" class="btn-logo">로고</a>
+            <div class="menu-list"> 
+                <a href="portfolio.html" class="btn-menu">포트폴리오</a>
+                <a href="price.html" class="btn-menu">홈페이지가격</a>
+                <a href="center.html" class="btn-menu">고객센터</a>
+                <a href="about.html" class="btn-menu">회사소개</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+    <section id="portfolio" class="content-section">
+    <div class="header_area">
+        <h2 class="font_goto72_700">포트폴리오</h2>
+    </div>
+
+    <div class="section-body">
+        <div class="category_tab">
+            <ul class="tab_list">
+                <li class="active" data-filter="all">전체</li>
+                <li data-filter="company">기업체</li>
+                <li data-filter="food">음식점</li>
+            </ul>
+        </div>
+
+        <div class="work_list_wrap">
+            <ul class="work_grid">
+                <li class="work_item" data-category="company">
+                    <div class="img_box"><img src="company1.jpg" alt="기업체1"></div>
+                    <p class="work_title">기업체 프로젝트 01</p>
+                </li>
+                <!--<li class="work_item" data-category="company">
+                    <div class="img_box"><img src="company2.jpg" alt="기업체2"></div>
+                    <p class="work_title">기업체 프로젝트 02</p>
+                </li>
+                <li class="work_item" data-category="company">
+                    <div class="img_box"><img src="company3.jpg" alt="기업체3"></div>
+                    <p class="work_title">기업체 프로젝트 03</p>
+                </li>
+                <li class="work_item" data-category="company">
+                    <div class="img_box"><img src="company4.jpg" alt="기업체4"></div>
+                    <p class="work_title">기업체 프로젝트 04</p>
+                </li>
+
+                <li class="work_item" data-category="food">
+                    <div class="img_box"><img src="food1.jpg" alt="음식점1"></div>
+                    <p class="work_title">음식점 프로젝트 01</p>
+                </li>
+                <li class="work_item" data-category="food">
+                    <div class="img_box"><img src="food2.jpg" alt="음식점2"></div>
+                    <p class="work_title">음식점 프로젝트 02</p>
+                </li>
+                <li class="work_item" data-category="food">
+                    <div class="img_box"><img src="food3.jpg" alt="음식점3"></div>
+                    <p class="work_title">음식점 프로젝트 03</p>
+                </li>
+                <li class="work_item" data-category="food">
+                    <div class="img_box"><img src="food4.jpg" alt="음식점4"></div>
+                    <p class="work_title">음식점 프로젝트 04</p>-->
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+</main>
+</div>
+
+<script>
+    window.onload = function() {
+    const tabItems = document.querySelectorAll('.tab_list li');
+    const workItems = document.querySelectorAll('.work_item');
+
+    tabItems.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // 1. 탭 활성화 스타일 변경
+            tabItems.forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
+
+            // 2. 필터링 로직
+            const filter = this.getAttribute('data-filter');
+
+            workItems.forEach(item => {
+                if (filter === 'all') {
+                    item.style.display = 'block'; // 전체보기
+                } else {
+                    if (item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block'; // 카테고리 일치 시 표시
+                    } else {
+                        item.style.display = 'none';  // 불일치 시 숨김
+                    }
+                }
+            });
+        });
+    });
+};
+</script>
+
+</body>
+</html>

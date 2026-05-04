@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>BOBSYS - 홈페이지</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <aside class="sidebar">
+        <nav class="menu-overlay">
+            <a href="index.html" class="btn-logo">로고</a>
+            
+            <div class="menu-list">
+                <a href="portfolio.html" class="btn-menu">포트폴리오</a>
+                <a href="price.html" class="btn-menu">홈페이지가격</a>
+                <a href="center.html" class="btn-menu">고객센터</a>
+                <a href="about.html" class="btn-menu">회사소개</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <section class="content-section">
+            <div class="header_area">
+                <h2 class="font_goto72_700">고객센터</h2>
+            </div>
+            <div class="section-body">
+                <p>웹사이트 제작 신청 및 문의사항을 남겨주세요.</p><br>
+                
+                <!-- 신청 양식 시작 -->
+                <div style="max-width: 500px;">
+                    <input type="text" id="company_name" placeholder="회사명 또는 성함" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <input type="text" id="phone" placeholder="연락처 (예: 010-1234-5678)" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <textarea id="message" placeholder="요구사항을 적어주세요" style="width:100%; height:150px; padding:10px; margin-bottom:10px;"></textarea>
+                    
+                    <button onclick="submitApplication()" style="width:100%; padding:15px; background:#0089B6; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">
+                        제작 신청하기
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- 1. Supabase 라이브러리 (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    // 2. 본인의 Supabase 정보 (아까 대시보드에서 복사한 것)
+    const SUPABASE_URL = 'https://your-project-id.supabase.co'; 
+    const SUPABASE_KEY = 'your-anon-key';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // 3. 데이터 저장 함수
+    async function submitApplication() {
+        const cName = document.getElementById('company_name').value;
+        const cPhone = document.getElementById('phone').value;
+        const cMsg = document.getElementById('message').value;
+
+        if(!cName || !cPhone) {
+            alert("이름과 연락처는 필수입니다.");
+            return;
+        }
+
+        // Supabase의 'applications' 테이블에 데이터 넣기
+        const { data, error } = await _supabase
+            .from('applications')
+            .insert([
+                { company_name: cName, phone: cPhone, message: cMsg }
+            ]);
+
+        if (error) {
+            console.error(error);
+            alert("신청 중 오류가 발생했습니다.");
+        } else {
+            alert("신청이 완료되었습니다! 확인 후 연락드리겠습니다.");
+            // 입력칸 비우기
+            document.getElementById('company_name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('message').value = '';
+        }
+    }
+</script>
+
+
+</body>
+</html>
