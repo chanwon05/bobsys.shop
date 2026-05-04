@@ -32,6 +32,8 @@
                 <!-- 신청 양식 시작 -->
                 <div style="max-width: 500px;">
                     <input type="text" id="company_name" placeholder="회사명 또는 성함" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <!-- 이메일 입력칸 추가 -->
+                    <input type="email" id="email" placeholder="이메일 주소" style="width:100%; padding:10px; margin-bottom:10px;">
                     <input type="text" id="phone" placeholder="연락처 (예: 010-1234-5678)" style="width:100%; padding:10px; margin-bottom:10px;">
                     <textarea id="message" placeholder="요구사항을 적어주세요" style="width:100%; height:150px; padding:10px; margin-bottom:10px;"></textarea>
                     
@@ -48,43 +50,50 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-    // 2. 본인의 Supabase 정보 (아까 대시보드에서 복사한 것)
-    // ✅ 최종 코드 형태
-const SUPABASE_URL = 'https://egzvbjrzifvsxeqgkxfv.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnenZianJ6aWZ2c3hlcWdreGZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MTM4MzAsImV4cCI6MjA5MzM4OTgzMH0.4XggWPtnKUhBCeP46Dasl-1LFWsURbPkaKbuiHM6Cr0';
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // 2. Supabase 설정
+    const SUPABASE_URL = 'https://egzvbjrzifvsxeqgkxfv.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnenZianJ6aWZ2c3hlcWdreGZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MTM4MzAsImV4cCI6MjA5MzM4OTgzMH0.4XggWPtnKUhBCeP46Dasl-1LFWsURbPkaKbuiHM6Cr0';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // 3. 데이터 저장 함수
     async function submitApplication() {
+        // HTML 요소에서 값 가져오기
         const cName = document.getElementById('company_name').value;
+        const cEmail = document.getElementById('email').value; // 이메일 추가
         const cPhone = document.getElementById('phone').value;
         const cMsg = document.getElementById('message').value;
 
+        // 유효성 검사
         if(!cName || !cPhone) {
             alert("이름과 연락처는 필수입니다.");
             return;
         }
 
-        // Supabase의 'applications' 테이블에 데이터 넣기
+        // Supabase 'applications' 테이블에 데이터 넣기 (컬럼명 image_64a6e8.png와 일치)
         const { data, error } = await _supabase
             .from('applications')
             .insert([
-                { company_name: cName, phone: cPhone, message: cMsg }
+                { 
+                    company_name: cName, 
+                    email: cEmail, 
+                    phone: cPhone, 
+                    message: cMsg 
+                }
             ]);
 
         if (error) {
-            console.error(error);
-            alert("신청 중 오류가 발생했습니다.");
+            console.error("전송 에러 상세:", error);
+            alert("신청 중 오류가 발생했습니다: " + error.message);
         } else {
             alert("신청이 완료되었습니다! 확인 후 연락드리겠습니다.");
-            // 입력칸 비우기
+            // 입력창 초기화
             document.getElementById('company_name').value = '';
+            document.getElementById('email').value = '';
             document.getElementById('phone').value = '';
             document.getElementById('message').value = '';
         }
     }
 </script>
-
 
 </body>
 </html>
