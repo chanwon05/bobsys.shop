@@ -98,8 +98,7 @@ body, html { height: 100%; font-family: "Malgun Gothic", sans-serif; }
 .header_area {
     display: flex;
     justify-content: flex-start; /* 왼쪽 정렬 */
-    /* 위에서 100px, 왼쪽에서 50px 띄움 */
-    padding: 100px 0px 20px 50px; 
+    padding: 50px 0px 20px 50px; 
 }
 @media (max-width: 1400px) {
     .font_goto72_700 {
@@ -177,7 +176,7 @@ body, html { height: 100%; font-family: "Malgun Gothic", sans-serif; }
 }
 /* 제목 스타일 고정 */
 .font_goto72_700 {
-    font-size: 72px;
+    font-size: 50px;
     font-weight: 700;
     color: #333;
 }
