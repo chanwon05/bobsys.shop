@@ -2,17 +2,18 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>BOBSYS - 홈페이지</title>
+    <title>BOBSYS - 포트폴리오</title>
+    <!-- CSS 파일이 index.html과 같은지 꼭 확인하세요 -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
+    <!-- 사이드바: index.html과 동일하게 유지 -->
     <aside class="sidebar">
         <nav class="menu-overlay">
             <a href="index.html" class="btn-logo">로고</a>
-            
-            <div class="menu-list">
+            <div class="menu-list"> 
                 <a href="portfolio.html" class="btn-menu">포트폴리오</a>
                 <a href="price.html" class="btn-menu">홈페이지가격</a>
                 <a href="center.html" class="btn-menu">고객센터</a>
@@ -21,13 +22,70 @@
         </nav>
     </aside>
 
+    <!-- 메인 콘텐츠 영역 -->
     <main class="main-content">
-        <section>
-            <h1>여기는 포트폴리오 홈페이지 입니다.</h1>
-            <p>밥시스 홈페이지 방문을 환영합니다.</p>
+        <section id="portfolio" class="content-section">
+            <div class="header_area">
+                <h2 class="font_goto72_700">포트폴리오</h2>
+            </div>
+
+            <div class="section-body">
+                <!-- 카테고리 탭 -->
+                <div class="category_tab">
+                    <ul class="tab_list">
+                        <li class="active" data-filter="all">전체</li>
+                        <li data-filter="company">기업체</li>
+                        <li data-filter="food">음식점</li>
+                    </ul>
+                </div>
+
+                <!-- 포트폴리오 리스트 -->
+                <div class="work_list_wrap">
+                    <ul class="work_grid">
+                        <!-- 밥시스 아이템 (왼쪽 여백 통일을 위해 구조 정돈) -->
+                        <li class="work_item" data-category="company">
+                            <a href="http://www.bobsys.co.kr" class="work_link" target="_blank" rel="noopener noreferrer">
+                                <div class="img_box">
+                                    <img src="company1.png" alt="밥시스">
+                                </div>
+                                <p class="work_title">밥시스</p>
+                            </a>
+                        </li>
+                        <!-- 추가 프로젝트가 있다면 여기에 <li> 추가 -->
+                    </ul>
+                </div>
+            </div>
         </section>
     </main>
 </div>
+
+<script>
+    window.onload = function() {
+        const tabItems = document.querySelectorAll('.tab_list li');
+        const workItems = document.querySelectorAll('.work_item');
+
+        tabItems.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabItems.forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+
+                const filter = this.getAttribute('data-filter');
+
+                workItems.forEach(item => {
+                    if (filter === 'all') {
+                        item.style.display = 'block';
+                    } else {
+                        if (item.getAttribute('data-category') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    };
+</script>
 
 </body>
 </html>
