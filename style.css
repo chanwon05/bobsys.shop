@@ -98,7 +98,7 @@ body, html { height: 100%; font-family: "Malgun Gothic", sans-serif; }
 .header_area {
     display: flex;
     justify-content: flex-start; /* 왼쪽 정렬 */
-    padding: 0px 0px 20px 50px; 
+    padding: 40px 0px 20px 70px; 
 }
 @media (max-width: 1400px) {
     .font_goto72_700 {
@@ -172,7 +172,7 @@ body, html { height: 100%; font-family: "Malgun Gothic", sans-serif; }
 }
 /* 섹션 안의 실제 내용 간격 */
 .section-body {
-    padding: 0 50px 100px 50px;
+    padding: 0 50px 100px 70px;
 }
 /* 제목 스타일 고정 */
 .font_goto72_700 {
@@ -202,4 +202,7 @@ body, html { height: 100%; font-family: "Malgun Gothic", sans-serif; }
 /* 호버 효과 */
 .btn-menu:hover {
     color: #FFEB3B;
+}
+.category_tab {
+    margin-bottom: 30px;
 }
