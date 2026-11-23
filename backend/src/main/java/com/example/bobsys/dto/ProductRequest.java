@@ -27,9 +27,14 @@ public class ProductRequest {
     @Size(max = 1000)
     private String imageUrl;
 
-    @NotNull
     @Positive
     private Long categoryId;
+
+    @Pattern(regexp = "/(page|card(/sample)?|(banner|leaflet|sticker)(/samples)?|envelope|catalog|paper_magnet|name_tag|promotional_item|property)")
+    private String pagePath;
+
+    public String getPagePath() { return pagePath; }
+    public void setPagePath(String pagePath) { this.pagePath = pagePath; }
 
     public String getName() {
         return name;

@@ -1,8 +1,10 @@
 import {useState} from "react";
 import useResource from "../hooks/useResource";
 import ResourceMessage from "../components/ResourceMessage";
-import {catalogPages} from "../data/catalog";
+import {catalogPages, isSamplePage} from "../data/catalog";
 import {deleteCategory, saveCategory} from "../services/api";
+
+const samplePages = catalogPages.filter((page) => isSamplePage(page.path));
 
 function CategoryForm({category, pagePath, onPageChange, onSaved, onCancel}) {
   const [form, setForm] = useState({name: category?.name || "", description: category?.description || ""});
@@ -30,7 +32,7 @@ function CategoryForm({category, pagePath, onPageChange, onSaved, onCancel}) {
       <fieldset disabled={saving}>
         <label>표시할 메뉴 페이지<select name="pagePath" value={pagePath} onChange={(event) => onPageChange(event.target.value)} required>
           <option value="">페이지 선택</option>
-          {catalogPages.map((page) => <option key={page.path} value={page.path}>{page.name}</option>)}
+          {samplePages.map((page) => <option key={page.path} value={page.path}>{page.name}</option>)}
         </select></label>
         <label>이름<input name="name" value={form.name} onChange={change} required maxLength={100} /></label>
         <label>설명<textarea name="description" value={form.description} onChange={change} maxLength={500} rows={4} /></label>
@@ -50,8 +52,8 @@ function AdminCategories() {
   const [formVersion, setFormVersion] = useState(0);
   const [deletingId, setDeletingId] = useState(null);
   const [mutationError, setMutationError] = useState("");
-  const selectedPage = catalogPages.find((page) => page.path === pagePath);
-  const visibleCategories = (data || []).filter((category) => !pagePath || category.pagePath === pagePath);
+  const selectedPage = samplePages.find((page) => page.path === pagePath);
+  const visibleCategories = (data || []).filter((category) => isSamplePage(category.pagePath) && (!pagePath || category.pagePath === pagePath));
   const reset = () => { setEditing(null); setFormVersion((current) => current + 1); };
   const remove = async (category) => {
     if (!window.confirm(`‘${category.name}’ 카테고리를 삭제할까요?`)) return;
@@ -69,7 +71,7 @@ function AdminCategories() {
   };
   return (
     <>
-      <div className="Catalog-heading"><h1>Category Management</h1><p>페이지를 선택하고 카테고리를 추가하세요. 저장 후에도 같은 페이지에 계속 등록할 수 있습니다.</p></div>
+      <div className="Catalog-heading"><h1>Category Management</h1><p>샘플 페이지를 선택하고 카테고리를 추가하세요. 저장 후에도 같은 페이지에 계속 등록할 수 있습니다.</p></div>
       <div className="Admin-category-layout">
         <CategoryForm key={editing?.id || `new-${formVersion}`} category={editing} pagePath={pagePath} onPageChange={setPagePath} onCancel={reset} onSaved={() => { reset(); reload(); }} />
         <section>
@@ -80,7 +82,7 @@ function AdminCategories() {
             <div className="Admin-table-wrap"><table className="Admin-table">
               <thead><tr><th>이름</th><th>페이지</th><th>설명</th><th>관리</th></tr></thead>
               <tbody>{visibleCategories.map((category) => <tr key={category.id}>
-                <td>{category.name}</td><td>{catalogPages.find((page) => page.path === category.pagePath)?.name || "미지정"}</td><td>{category.description}</td>
+                <td>{category.name}</td><td>{samplePages.find((page) => page.path === category.pagePath)?.name || "미지정"}</td><td>{category.description}</td>
                 <td><div className="Admin-row-actions">
                   <button className="Catalog-button Catalog-button-secondary" onClick={() => { setEditing(category); setPagePath(category.pagePath || ""); }}>수정</button>
                   <button className="Catalog-button Catalog-button-danger" disabled={deletingId !== null} onClick={() => remove(category)}>{deletingId === category.id ? "삭제 중…" : "삭제"}</button>

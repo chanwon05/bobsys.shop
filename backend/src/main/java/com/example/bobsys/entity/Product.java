@@ -34,6 +34,15 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Column(length = 100)
+    private String pagePath;
+
+    public String getPagePath() {
+        return pagePath != null ? pagePath : category == null ? null : category.getPagePath();
+    }
+
+    public void setPagePath(String pagePath) { this.pagePath = pagePath; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 

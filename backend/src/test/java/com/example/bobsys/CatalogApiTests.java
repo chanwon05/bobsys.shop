@@ -72,6 +72,50 @@ class CatalogApiTests {
     }
 
     @Test
+    void savesPriceProductsByPageWithoutCategories() throws Exception {
+        String body = "{\"name\":\"가격 상품\",\"quantity\":100,\"singleSidePrice\":10000,\"pagePath\":\"/card\"}";
+        var created = call("POST", "/api/admin/products", body);
+        assertEquals(201, created.statusCode(), created.body());
+        long productId = id(created.body());
+        assertNull(products.findById(productId).orElseThrow().getCategory());
+        assertEquals("/card", products.findById(productId).orElseThrow().getPagePath());
+        assertEquals(0, categories.count());
+        var updated = call("PUT", "/api/admin/products/" + productId, body.replace("/card", "/banner"));
+        assertEquals(200, updated.statusCode(), updated.body());
+        assertEquals("/banner", products.findById(productId).orElseThrow().getPagePath());
+        assertTrue(raw("GET", "/api/products", null, null).body().contains("\"pagePath\":\"/banner\""));
+        assertEquals(400, call("POST", "/api/admin/products", body.replace("10000", "null")).statusCode());
+        assertEquals(400, call("POST", "/api/admin/products", body.replace("/card", "/unknown")).statusCode());
+        assertEquals(400, call("POST", "/api/admin/products", body.replace(",\"pagePath\":\"/card\"", "")).statusCode());
+    }
+
+    @Test
+    void requiresMatchingCategoryOnlyForSamples() throws Exception {
+        var category = call("POST", "/api/admin/categories", "{\"name\":\"샘플 분류\",\"pagePath\":\"/card/sample\"}");
+        long categoryId = id(category.body());
+        String body = "{\"name\":\"샘플\",\"quantity\":1,\"pagePath\":\"/card/sample\"}";
+        assertEquals(400, call("POST", "/api/admin/products", body).statusCode());
+        String categorized = body.replace("}", ",\"categoryId\":" + categoryId + "}");
+        var created = call("POST", "/api/admin/products", categorized);
+        assertEquals(201, created.statusCode(), created.body());
+        assertNull(products.findById(id(created.body())).orElseThrow().getSingleSidePrice());
+        assertEquals(400, call("POST", "/api/admin/products", categorized.replace("/card/sample", "/banner/samples")).statusCode());
+    }
+
+    @Test
+    void preservesLegacyProductPageWhenRemovingCategoryOnEdit() throws Exception {
+        long categoryId = createCategory("기존 명함");
+        var category = categories.findById(categoryId).orElseThrow();
+        var legacy = new com.example.bobsys.entity.Product("기존 상품", 100, java.math.BigDecimal.TEN, null, null, category);
+        long productId = products.save(legacy).getId();
+        assertEquals("/card", products.findById(productId).orElseThrow().getPagePath());
+        String body = "{\"name\":\"기존 상품\",\"quantity\":100,\"singleSidePrice\":10,\"pagePath\":\"/card\"}";
+        assertEquals(200, call("PUT", "/api/admin/products/" + productId, body).statusCode());
+        assertNull(products.findById(productId).orElseThrow().getCategory());
+        assertEquals("/card", products.findById(productId).orElseThrow().getPagePath());
+    }
+
+    @Test
     void createsOneOrTwoPricesAndRemovesOptionalPriceOnUpdate() throws Exception {
         long categoryId = createCategory("명함");
         var created = call("POST", "/api/admin/products", product(categoryId, "0", "null"));
@@ -352,9 +396,10 @@ class CatalogApiTests {
     }
 
     private long id(String json) {
-        var matcher = Pattern.compile("\"id\"\\s*:\\s*(\\d+)").matcher(json);
-        assertTrue(matcher.find(), json);
-        return Long.parseLong(matcher.group(1));
+        var root = new tools.jackson.databind.json.JsonMapper().readTree(json);
+        var value = (root.isArray() ? root.get(0) : root).get("id");
+        assertNotNull(value, json);
+        return value.asLong();
     }
 
     private HttpResponse<String> call(String method, String path, String json) throws Exception {

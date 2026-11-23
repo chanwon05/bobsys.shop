@@ -5,7 +5,7 @@ import {catalogPages, isSamplePage} from "../data/catalog";
 function ProductForm({categories, initialProduct, onSubmit, sampleMode = false}) {
   const label = sampleMode ? "샘플" : "상품";
   const pages = catalogPages.filter((page) => isSamplePage(page.path) === sampleMode);
-  const [pagePath, setPagePath] = useState(initialProduct?.category?.pagePath || "");
+  const [pagePath, setPagePath] = useState(initialProduct?.pagePath || initialProduct?.category?.pagePath || "");
   const pageCategories = categories.filter((category) => category.pagePath === pagePath);
   const [form, setForm] = useState({
     name: initialProduct?.name || "",
@@ -41,8 +41,8 @@ function ProductForm({categories, initialProduct, onSubmit, sampleMode = false})
   const submit = async (event) => {
     event.preventDefault();
     setError("");
-    if (!pagePath || !pageCategories.some((category) => String(category.id) === String(form.categoryId))) {
-      setError("페이지와 해당 페이지의 카테고리를 선택해 주세요.");
+    if (!pagePath || (sampleMode && !pageCategories.some((category) => String(category.id) === String(form.categoryId)))) {
+      setError(sampleMode ? "페이지와 해당 페이지의 카테고리를 선택해 주세요." : "페이지를 선택해 주세요.");
       return;
     }
     if (!sampleMode && form.singleSidePrice === "" && form.doubleSidePrice === "") {
@@ -68,7 +68,8 @@ function ProductForm({categories, initialProduct, onSubmit, sampleMode = false})
         imageUrl,
         name: form.name.trim(),
         quantity: Number(form.quantity),
-        categoryId: Number(form.categoryId),
+        pagePath,
+        categoryId: sampleMode ? Number(form.categoryId) : null,
         singleSidePrice: sampleMode || form.singleSidePrice === "" ? null : Number(form.singleSidePrice),
         doubleSidePrice: sampleMode || form.doubleSidePrice === "" ? null : Number(form.doubleSidePrice),
       });
@@ -92,10 +93,10 @@ function ProductForm({categories, initialProduct, onSubmit, sampleMode = false})
             <option value="">페이지 선택</option>
             {pages.map((page) => <option key={page.path} value={page.path}>{page.name}</option>)}
           </select></label>
-          <label>카테고리<select name="categoryId" value={form.categoryId} onChange={change} disabled={!pagePath || !pageCategories.length} required>
+          {sampleMode && <label>카테고리<select name="categoryId" value={form.categoryId} onChange={change} disabled={!pagePath || !pageCategories.length} required>
             <option value="">카테고리 선택</option>
             {pageCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
-          </select></label>
+          </select></label>}
           {!sampleMode && <>
           <label>기준 수량<input name="quantity" type="number" min="1" max="2147483647" step="1" value={form.quantity} onChange={change} required /></label>
           <label>기본 / 단면 가격 (원)<input name="singleSidePrice" type="number" min="0" max="999999999999" step="1" value={form.singleSidePrice} onChange={change} /></label>
@@ -107,8 +108,8 @@ function ProductForm({categories, initialProduct, onSubmit, sampleMode = false})
         <p className="Admin-hint" id="product-image-help">JPG·PNG, 최대 5MB. 저장 시 업로드됩니다. 수정 시 새 파일을 선택하지 않으면 기존 이미지를 유지합니다.</p>
         {(previewUrl || form.imageUrl) && <img className="Admin-image-preview" src={previewUrl || imageSource(form.imageUrl)} alt="상품 이미지 미리보기" />}
         <label>{label} 설명<textarea name="description" value={form.description} onChange={change} rows={4} maxLength={5000} /></label>
-        {pagePath && !pageCategories.length && <p role="status">선택한 페이지에 등록된 카테고리가 없습니다. 카테고리 관리에서 먼저 추가해 주세요.</p>}
-        <button className="Catalog-button" type="submit" disabled={!pagePath || !pageCategories.length}>{saving ? "저장 중…" : `${label} 저장`}</button>
+        {sampleMode && pagePath && !pageCategories.length && <p role="status">선택한 페이지에 등록된 카테고리가 없습니다. 카테고리 관리에서 먼저 추가해 주세요.</p>}
+        <button className="Catalog-button" type="submit" disabled={!pagePath || (sampleMode && !pageCategories.length)}>{saving ? "저장 중…" : `${label} 저장`}</button>
       </fieldset>
     </form>
   );

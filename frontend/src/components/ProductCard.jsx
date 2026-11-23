@@ -4,7 +4,7 @@ import {imageSource} from "../services/api";
 import {isSamplePage} from "../data/catalog";
 
 function ProductCard({product}) {
-  const sample = isSamplePage(product.category?.pagePath);
+  const sample = isSamplePage(product.pagePath || product.category?.pagePath);
   const [failedUrl, setFailedUrl] = useState(null);
   return (
     <article className="ProductCard">

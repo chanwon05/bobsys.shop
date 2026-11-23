@@ -51,9 +51,17 @@ public class CatalogService {
 
     @Transactional
     public Product saveProduct(Long id, ProductRequest request) {
-        Category category = getCategory(request.getCategoryId());
+        Category category = request.getCategoryId() == null ? null : getCategory(request.getCategoryId());
+        String pagePath = request.getPagePath() != null ? request.getPagePath()
+                : category == null ? null : category.getPagePath();
+        if (pagePath == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "페이지를 선택해 주세요.");
+        }
         boolean sample = java.util.Arrays.asList("/card/sample", "/banner/samples", "/leaflet/samples", "/sticker/samples")
-                .contains(category.getPagePath());
+                .contains(pagePath);
+        if (sample && (category == null || !pagePath.equals(category.getPagePath()))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "선택한 샘플 페이지의 카테고리를 선택해 주세요.");
+        }
         if (!sample && request.getSingleSidePrice() == null && request.getDoubleSidePrice() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가격을 최소 하나 입력해 주세요.");
         }
@@ -65,6 +73,8 @@ public class CatalogService {
         product.setDoubleSidePrice(sample ? null : request.getDoubleSidePrice());
         product.setImageUrl(request.getImageUrl());
         product.setCategory(category);
+        product.setPagePath(sample ? null : request.getPagePath());
+        if (request.getPagePath() != null && !sample) product.setCategory(null);
         return products.save(product);
     }
 

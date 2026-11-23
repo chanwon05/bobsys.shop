@@ -4,7 +4,7 @@ import useResource from "../hooks/useResource";
 import ResourceMessage from "../components/ResourceMessage";
 import ProductPrices from "../components/ProductPrices";
 import {deleteProduct} from "../services/api";
-import {isSamplePage} from "../data/catalog";
+import {catalogPages, isSamplePage} from "../data/catalog";
 
 function AdminProducts({sampleMode = false}) {
   const label = sampleMode ? "샘플" : "상품";
@@ -13,7 +13,7 @@ function AdminProducts({sampleMode = false}) {
   const [keyword, setKeyword] = useState("");
   const [mutationError, setMutationError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
-  const filtered = (data || []).filter((product) => isSamplePage(product.category?.pagePath) === sampleMode
+  const filtered = (data || []).filter((product) => isSamplePage(product.pagePath || product.category?.pagePath) === sampleMode
     && product.name.toLowerCase().includes(keyword.trim().toLowerCase()));
 
   const remove = async (product) => {
@@ -41,10 +41,10 @@ function AdminProducts({sampleMode = false}) {
       <ResourceMessage loading={loading} error={error} onRetry={reload} />
       {!loading && !error && (filtered.length ? (
         <div className="Admin-table-wrap"><table className="Admin-table">
-          <thead><tr><th>{label}</th><th>카테고리</th>{!sampleMode && <><th>수량</th><th>가격</th></>}<th>관리</th></tr></thead>
+          <thead><tr><th>{label}</th><th>{sampleMode ? "카테고리" : "페이지"}</th>{!sampleMode && <><th>수량</th><th>가격</th></>}<th>관리</th></tr></thead>
           <tbody>{filtered.map((product) => <tr key={product.id}>
             <td><strong>{product.name}</strong><small>ID: {product.id}</small></td>
-            <td>{product.category?.name}</td>
+            <td>{sampleMode ? product.category?.name : catalogPages.find((page) => page.path === (product.pagePath || product.category?.pagePath))?.name}</td>
             {!sampleMode && <><td>{product.quantity}</td><td><ProductPrices product={product} /></td></>}
             <td><div className="Admin-row-actions">
               <Link className="Catalog-button Catalog-button-secondary" to={`${basePath}/edit/${product.id}`}>수정</Link>

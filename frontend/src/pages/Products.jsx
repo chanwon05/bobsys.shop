@@ -2,20 +2,21 @@ import {useSearchParams} from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import ResourceMessage from "../components/ResourceMessage";
 import useResource from "../hooks/useResource";
-import {catalogPages} from "../data/catalog";
+import {catalogPages, isSamplePage} from "../data/catalog";
 
 function Products({pagePath, title = "전체 상품"}) {
+  const sampleMode = isSamplePage(pagePath);
   const page = catalogPages.find((item) => item.path === pagePath);
   const products = useResource("/products");
   const categories = useResource("/categories");
   const [searchParams, setSearchParams] = useSearchParams();
   const pageCategories = (categories.data || []).filter((category) => !pagePath || category.pagePath === pagePath);
   const requestedCategory = searchParams.get("category") || "";
-  const categoryId = pageCategories.some((category) => String(category.id) === requestedCategory) ? requestedCategory : "";
+  const categoryId = sampleMode && pageCategories.some((category) => String(category.id) === requestedCategory) ? requestedCategory : "";
   const filtered = (products.data || []).filter((product) =>
-    (!pagePath || product.category?.pagePath === pagePath) && (!categoryId || String(product.category?.id) === categoryId));
-  const loading = products.loading || categories.loading;
-  const error = products.error || categories.error;
+    (!pagePath || (product.pagePath || product.category?.pagePath) === pagePath) && (!categoryId || String(product.category?.id) === categoryId));
+  const loading = products.loading || (sampleMode && categories.loading);
+  const error = products.error || (sampleMode && categories.error);
   const [bannerX, bannerY, bannerWidth, bannerHeight] = page?.bannerRegion || [];
   const selectCategory = (id) => {
     const next = new URLSearchParams(searchParams);
@@ -39,13 +40,13 @@ function Products({pagePath, title = "전체 상품"}) {
       <ResourceMessage loading={loading} error={error} onRetry={() => { products.reload(); categories.reload(); }} />
       {!loading && !error && (
         <>
-          <div className="Catalog-category-buttons" role="group" aria-label="상품 카테고리">
+          {sampleMode && <div className="Catalog-category-buttons" role="group" aria-label="상품 카테고리">
             <button type="button" aria-pressed={!categoryId} onClick={() => selectCategory("")}>전체</button>
             {pageCategories.map((category) => (
               <button key={category.id} type="button" aria-pressed={categoryId === String(category.id)}
                 onClick={() => selectCategory(String(category.id))}>{category.name}</button>
             ))}
-          </div>
+          </div>}
           <p className="Catalog-count" aria-live="polite">{filtered.length}개의 상품</p>
           <div className="ProductGrid">{filtered.map((product) => <ProductCard key={product.id} product={product} />)}</div>
           {filtered.length === 0 && <p className="Catalog-message">표시할 상품이 없습니다.</p>}
