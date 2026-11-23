@@ -1,0 +1,31 @@
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Frontend
+node_modules/
+dist/
+dist-ssr/
+
+# Java / Gradle
+.gradle/
+build/
+out/
+
+# Editors
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs, uploads and local backups
+*.log
+backend/uploads/
+backup/
+image-backups/
+.tools/
+deploy/
+__pycache__/
