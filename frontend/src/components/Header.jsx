@@ -57,7 +57,7 @@ const Header = () => {
   return (
     <header className="Header">
       <a className="Header-logo" href="/">
-        <span className="Header-logo-sub">BOBSYS</span>
+        <span className="Header-logo-sub">BOBSYS/1999~</span>
         <span className="Header-logo-main">밥시스</span>
       </a>
 

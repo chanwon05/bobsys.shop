@@ -48,7 +48,7 @@ body {
 .Header-logo-sub {
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 3px;
+  letter-spacing: 0;
 }
 
 .Header-logo-main {
