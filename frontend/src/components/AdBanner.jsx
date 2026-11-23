@@ -2,8 +2,7 @@ import {useEffect, useState} from "react";
 
 const ads = [
   {
-    image: "/images/배너1.jpg",
-    signupUrl: "http://www.bobsys.co.kr",
+    image: "/images/배너5.jpg",
   },
   {
     image: "/images/배너2.jpg",
@@ -15,21 +14,14 @@ const ads = [
     image: "/images/배너4.jpg",
   },
   {
-    image: "/images/배너5.jpg",
+    image: "/images/배너1.jpg",
+    signupUrl: "http://www.bobsys.co.kr",
   }
 ];
 
 const AdBanner = () => {
   const [adIndex, setAdIndex] = useState(0);
   const ad = ads[adIndex];
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setAdIndex((prev) => (prev + 1) % ads.length);
-    }, 3000);
-
-    return () => window.clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     const onKeyDown = (event) => {
