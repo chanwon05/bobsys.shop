@@ -13,7 +13,7 @@ const menus = [
     {name: "종이자석", path: "/paper_magnet"},
     {name: "명찰/신분증", path: "/name_tag"},
     {name: "판촉물", path: "/promotional_item"},
-    {name: "부동산모음", path: "/property"},
+    {name: "부동산할인", path: "/property"},
     {name: "관리자", path: "/admin"}
 ];
 
@@ -89,7 +89,7 @@ const Header = () => {
         ) : (
           <button
             key={menu.name}
-            className="Header-menu"
+            className={`Header-menu${menu.path === "/property" ? " Header-menu-discount" : ""}`}
             type="button"
             onClick={() => navigate(menu.path)}
           >

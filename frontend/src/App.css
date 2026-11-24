@@ -86,6 +86,12 @@ body {
   color: #2593ff;
 }
 
+.Header-menu-discount,
+.Header-menu-discount:hover {
+  color: #dc2626;
+  font-weight: 700;
+}
+
 .Header-dropdown {
   position: relative;
 }
