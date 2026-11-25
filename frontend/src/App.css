@@ -891,6 +891,22 @@ body {
   box-shadow: 0 3px 8px rgba(26, 42, 66, 0.08);
 }
 
+.ProductCard-image {
+  transition: transform 250ms ease;
+}
+
+@media (hover: hover) {
+  .ProductCard-media:hover .ProductCard-image {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ProductCard-image {
+    transition: none;
+  }
+}
+
 .ProductCard-image,
 .ProductCard-placeholder {
   display: block;
