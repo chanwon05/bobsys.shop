@@ -900,7 +900,6 @@ body {
 }
 
 .ProductCard-priced .ProductCard-media {
-  margin-top: auto;
   border-radius: 0;
   box-shadow: none;
 }
@@ -999,7 +998,7 @@ body {
 
 .ProductCard .ProductCard-prices dt,
 .ProductCard .ProductCard-prices dd {
-  color: #d9007a;
+  color: #4389ff;
 }
 
 .ProductCard-prices {
