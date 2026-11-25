@@ -85,7 +85,7 @@ const Header = () => {
               {menu.name}
             </button>
             <div className="Header-submenu" id={`submenu-${menu.path.slice(1)}`} hidden={openMenu !== menu.path}>
-              <Link to={menu.path} onClick={() => setOpenMenu(null)}>가격</Link>
+              <Link to={menu.path} onClick={() => setOpenMenu(null)}>{menu.path === "/card" ? "종이재질&가격" : "가격"}</Link>
               <Link to={menu.submenu.path} onClick={() => setOpenMenu(null)}>{menu.submenu.name}</Link>
             </div>
           </div>
