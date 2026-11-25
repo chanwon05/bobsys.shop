@@ -891,19 +891,43 @@ body {
   box-shadow: 0 3px 8px rgba(26, 42, 66, 0.08);
 }
 
+.ProductCard-priced {
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: #f5f5f5;
+  box-shadow: 0 3px 8px rgba(26, 42, 66, 0.08);
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.ProductCard-priced .ProductCard-media {
+  margin-top: auto;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .ProductCard-image {
   transition: transform 250ms ease;
 }
 
 @media (hover: hover) {
-  .ProductCard-media:hover .ProductCard-image {
+  .ProductCard-priced:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 12px 20px rgba(26, 42, 66, 0.18);
+  }
+
+  .ProductCard:not(.ProductCard-priced) .ProductCard-media:hover .ProductCard-image {
     transform: scale(1.08);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .ProductCard-priced,
   .ProductCard-image {
     transition: none;
+  }
+
+  .ProductCard-priced:hover {
+    transform: none;
   }
 }
 
@@ -926,8 +950,8 @@ body {
 .ProductCard-body {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 14px 0 0;
+  gap: 12px;
+  padding: 7px 22px;
   box-sizing: border-box;
 }
 
@@ -957,16 +981,25 @@ body {
   margin: 0;
   color: #657286;
   font-size: 15px;
+  white-space: nowrap;
+}
+
+.ProductCard .ProductCard-prices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 18px;
 }
 
 .ProductCard .ProductCard-prices div {
-  justify-content: flex-start;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
   padding: 0;
 }
 
 .ProductCard .ProductCard-prices dt,
 .ProductCard .ProductCard-prices dd {
-  color: #4389ff;
+  color: #d9007a;
 }
 
 .ProductCard-prices {
