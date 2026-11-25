@@ -65,6 +65,9 @@ const Header = () => {
         {menus.filter((menu) => menu.path !== "/admin" || isAdmin).map((menu) => menu.submenu ? (
           <div key={menu.name} className="Header-dropdown"
             onMouseEnter={() => setOpenMenu(menu.path)} onMouseLeave={() => setOpenMenu(null)}
+            onFocus={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setOpenMenu(menu.path);
+            }}
             onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) setOpenMenu(null);
             }}
