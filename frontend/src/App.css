@@ -1408,6 +1408,62 @@ body {
     gap: 10px;
   }
 
+  .Catalog {
+    width: calc(100% - 32px);
+  }
+
+  .Catalog .ProductGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
+    align-items: start;
+  }
+
+  .Catalog .ProductCard-priced .ProductCard-media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .Catalog .ProductCard-priced .ProductCard-image,
+  .Catalog .ProductCard-priced .ProductCard-placeholder {
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: contain;
+  }
+
+  .Catalog .ProductCard-body {
+    gap: 8px;
+    padding: 12px 10px;
+  }
+
+  .Catalog .ProductCard-heading h2 {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .Catalog .ProductCard-quantity,
+  .Catalog .ProductCard .ProductCard-prices dt {
+    font-size: 13px;
+  }
+
+  .Catalog .ProductCard-description {
+    font-size: 14px;
+  }
+
+  .Catalog .ProductCard .ProductCard-prices {
+    gap: 4px;
+  }
+
+  .Catalog .ProductCard .ProductCard-prices div {
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .Catalog .ProductCard-prices dd {
+    font-size: 18px;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
   .Admin-panel,
   .Catalog-filters {
     padding: 16px;
@@ -1434,5 +1490,11 @@ body {
   .Footer {
     margin-top: 32px;
     padding: 32px 20px;
+  }
+}
+
+@media (max-width: 379px) {
+  .Catalog .ProductGrid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
