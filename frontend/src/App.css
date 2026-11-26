@@ -45,6 +45,11 @@ body {
   text-decoration: none;
 }
 
+.Header-toggle,
+.Header-nav-mobile {
+  display: none;
+}
+
 .Header-logo-sub {
   font-size: 10px;
   font-weight: 800;
@@ -62,6 +67,7 @@ body {
 .Header-nav {
   display: flex;
   flex: 1;
+  min-width: 0;
   align-items: center;
   justify-content: flex-start;
   align-self: flex-end;
@@ -77,7 +83,7 @@ body {
   font-family: inherit;
   cursor: pointer;
   color: #333;
-  font-size: 16px;
+  font-size: 17px;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -90,6 +96,12 @@ body {
 .Header-menu-discount:hover {
   color: #dc2626;
   font-weight: 700;
+}
+
+.Header .Header-menu[data-active="true"],
+.Header .Header-submenu a[aria-current="page"],
+.Header .Header-mobile-submenu a[aria-current="page"] {
+  color: #2593ff;
 }
 
 .Header-dropdown {
@@ -174,23 +186,69 @@ body {
 
 /* ===== AdBanner: 메인 배너 ===== */
 .AdBanner {
+  --banner-width: min(var(--content-width), calc(100% - 90px));
+  --banner-gap: 16px;
+  --banner-crop: 15px;
   position: relative;
   box-sizing: border-box;
-  width: calc(100% - 90px);
-  max-width: var(--content-width);
+  width: 100%;
   margin: 0 auto;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(120deg, #edf4ff, #e9e5ff);
   text-align: center;
+}
+
+.AdBanner-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.AdBanner-slides {
+  position: relative;
+  width: var(--banner-width);
+  margin: 0 auto;
+}
+
+.AdBanner-preview {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #f3f5f7;
+  cursor: pointer;
+}
+
+.AdBanner-preview-previous {
+  right: calc(100% + var(--banner-gap));
+}
+
+.AdBanner-preview-next {
+  left: calc(100% + var(--banner-gap));
+}
+
+.AdBanner-preview .AdBanner-image {
+  height: calc(100% + var(--banner-crop));
+  object-fit: cover;
+  object-position: top;
+}
+
+.AdBanner-preview:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: -3px;
 }
 
 .AdBanner-image-wrap {
   position: relative;
   width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .AdBanner-image {
@@ -199,18 +257,36 @@ body {
   height: auto;
 }
 
+.AdBanner-image-wrap > .AdBanner-image {
+  margin-bottom: calc(-1 * var(--banner-crop));
+}
+
 .AdBanner-content {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   gap: 12px;
-  width: 100%;
+  width: var(--banner-width);
   padding: 12px 0;
   background-color: rgba(255, 255, 255, 0.85);
 }
 
+.AdBanner-progress {
+  flex: 1;
+  height: 3px;
+  margin-right: 12px;
+  background-color: #dce1e9;
+}
+
+.AdBanner-progress span {
+  display: block;
+  height: 100%;
+  background-color: #4389ff;
+}
+
 .AdBanner-arrow {
+  flex-shrink: 0;
   width: 40px;
   height: 40px;
   display: flex;
@@ -241,9 +317,9 @@ body {
 .AdBanner-signup {
   position: absolute;
   left: 71.5%;
-  top: 50%;
+  top: calc(50% + var(--banner-crop) * 0.5);
   width: 26.2%;
-  height: 17.3%;
+  height: calc(17.3% + var(--banner-crop) * 0.173);
   border-radius: 7% / 33%;
 }
 
@@ -255,7 +331,8 @@ body {
 
 @media (max-width: 600px) {
   .AdBanner {
-    width: calc(100% - 40px);
+    --banner-width: calc(100% - 64px);
+    --banner-gap: 10px;
   }
 }
 
@@ -679,6 +756,7 @@ body {
 .WebsitePage-details dd {
   margin: 0;
   text-align: left;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 600px) {
@@ -809,6 +887,7 @@ body {
 .Admin select,
 .Admin textarea {
   width: 100%;
+  min-width: 0;
   box-sizing: border-box;
   padding: 12px;
   border: 1px solid #cbd3df;
@@ -1224,4 +1303,136 @@ body {
   border: 1px solid #e7ebf0;
   border-radius: 12px;
   background-color: #f3f5f7;
+}
+
+/* ===== 모바일 레이아웃 ===== */
+@media (max-width: 768px) {
+  .Header {
+    position: relative;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+
+  .Header-nav-desktop {
+    display: none;
+  }
+
+  .Header-toggle {
+    display: block;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid #cbd3df;
+    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .Header-nav-mobile:not([hidden]) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+    width: 100%;
+    border-top: 1px solid #e7ebf0;
+    padding-top: 12px;
+  }
+
+  .Header-mobile-group {
+    min-width: 0;
+  }
+
+  .Header-mobile-group a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+
+  .Header-mobile-submenu a {
+    gap: 6px;
+    color: #657286;
+    font-size: 14px;
+  }
+
+  .Header-mobile-submenu a::before {
+    content: "▸";
+    color: #004494;
+  }
+
+  .Header-toggle:focus-visible,
+  .Header-nav-mobile a:focus-visible {
+    outline: 2px solid #2593ff;
+    outline-offset: 2px;
+  }
+
+  .WebsitePage-details > div {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .AdGallery-notices {
+    aspect-ratio: auto;
+  }
+
+  .Footer-info {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 600px) {
+  .WebsitePage,
+  .Catalog,
+  .About-page,
+  .Location-page,
+  .Privacy-page {
+    padding-top: 20px;
+    padding-bottom: 32px;
+  }
+
+  .WebsitePage-plans {
+    margin-bottom: 32px;
+  }
+
+  .ProductCard-body {
+    padding: 12px 16px;
+  }
+
+  .Catalog-category-buttons {
+    gap: 10px;
+  }
+
+  .Admin-panel,
+  .Catalog-filters {
+    padding: 16px;
+    min-width: 0;
+  }
+
+  .Catalog-filters label {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+
+  .Admin-form-grid > label,
+  .Admin-actions > *,
+  .Admin-category-layout > * {
+    min-width: 0;
+  }
+
+  .Admin input,
+  .Admin select,
+  .Admin textarea {
+    font-size: 16px;
+  }
+
+  .Footer {
+    margin-top: 32px;
+    padding: 32px 20px;
+  }
 }

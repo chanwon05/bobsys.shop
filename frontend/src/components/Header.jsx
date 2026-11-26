@@ -1,4 +1,4 @@
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getToken, request} from "../services/api";
 
@@ -20,8 +20,13 @@ const menus = [
 
 const Header = () => {
   const navigate = useNavigate();
+  const {pathname} = useLocation();
+  const currentPath = pathname.replace(/\/$/, "").replace(/^\/card\/samples$/, "/card/sample");
+  const isMenuActive = (menu) => currentPath === menu.path || currentPath.startsWith(`${menu.path}/`) || currentPath === menu.submenu?.path;
+  const currentPage = (path) => currentPath === path ? "page" : undefined;
   const [isAdmin, setIsAdmin] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -61,7 +66,12 @@ const Header = () => {
         <span className="Header-logo-main">밥시스</span>
       </a>
 
-      <nav className="Header-nav" aria-label="상품 메뉴">
+      <button className="Header-toggle" type="button" aria-expanded={mobileMenuOpen}
+        aria-controls="mobile-menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        {mobileMenuOpen ? "메뉴 닫기" : "메뉴"}
+      </button>
+
+      <nav className="Header-nav Header-nav-desktop" aria-label="상품 메뉴">
         {menus.filter((menu) => menu.path !== "/admin" || isAdmin).map((menu) => menu.submenu ? (
           <div key={menu.name} className="Header-dropdown"
             onMouseEnter={() => setOpenMenu(menu.path)} onMouseLeave={() => setOpenMenu(null)}
@@ -78,6 +88,7 @@ const Header = () => {
               }
             }}>
             <button className="Header-menu" type="button" aria-expanded={openMenu === menu.path}
+              data-active={isMenuActive(menu)} aria-current={currentPage(menu.path)}
               aria-controls={`submenu-${menu.path.slice(1)}`} onClick={() => {
                 setOpenMenu(null);
                 navigate(menu.path);
@@ -85,19 +96,33 @@ const Header = () => {
               {menu.name}
             </button>
             <div className="Header-submenu" id={`submenu-${menu.path.slice(1)}`} hidden={openMenu !== menu.path}>
-              <Link to={menu.path} onClick={() => setOpenMenu(null)}>{menu.path === "/card" ? "종이재질&가격" : "가격"}</Link>
-              <Link to={menu.submenu.path} onClick={() => setOpenMenu(null)}>{menu.submenu.name}</Link>
+              <Link to={menu.path} aria-current={currentPage(menu.path)} onClick={() => setOpenMenu(null)}>{menu.path === "/card" ? "종이재질&가격" : "가격"}</Link>
+              <Link to={menu.submenu.path} aria-current={currentPage(menu.submenu.path)} onClick={() => setOpenMenu(null)}>{menu.submenu.name}</Link>
             </div>
           </div>
         ) : (
           <button
             key={menu.name}
             className={`Header-menu${menu.path === "/property" ? " Header-menu-discount" : ""}`}
+            data-active={isMenuActive(menu)} aria-current={currentPage(menu.path)}
             type="button"
             onClick={() => navigate(menu.path)}
           >
             {menu.name}
           </button>
+        ))}
+      </nav>
+      <nav className="Header-nav-mobile" id="mobile-menu" aria-label="모바일 상품 메뉴" hidden={!mobileMenuOpen}>
+        {menus.filter((menu) => menu.path !== "/admin" || isAdmin).map((menu) => (
+          <div key={menu.path} className="Header-mobile-group">
+            <Link className={`Header-menu${menu.path === "/property" ? " Header-menu-discount" : ""}`}
+              data-active={isMenuActive(menu)} aria-current={currentPage(menu.path)}
+              to={menu.path} onClick={() => setMobileMenuOpen(false)}>{menu.name}</Link>
+            {menu.submenu && <div className="Header-mobile-submenu">
+              <Link to={menu.path} aria-current={currentPage(menu.path)} onClick={() => setMobileMenuOpen(false)}>{menu.path === "/card" ? "종이재질&가격" : "가격"}</Link>
+              <Link to={menu.submenu.path} aria-current={currentPage(menu.submenu.path)} onClick={() => setMobileMenuOpen(false)}>{menu.submenu.name}</Link>
+            </div>}
+          </div>
         ))}
       </nav>
     </header>
