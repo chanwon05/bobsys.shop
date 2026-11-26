@@ -1459,7 +1459,7 @@ body {
   }
 
   .Catalog .ProductCard-prices dd {
-    font-size: 18px;
+    font-size: 14px;
     overflow-wrap: anywhere;
     min-width: 0;
   }
