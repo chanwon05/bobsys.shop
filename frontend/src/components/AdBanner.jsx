@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 const ads = [
   {
@@ -21,6 +21,8 @@ const ads = [
 
 const AdBanner = () => {
   const [adIndex, setAdIndex] = useState(0);
+  const touchStart = useRef(null);
+  const suppressClickUntil = useRef(0);
   const ad = ads[adIndex];
 
   useEffect(() => {
@@ -49,9 +51,45 @@ const AdBanner = () => {
     setAdIndex((prev) => (prev + 1) % ads.length);
   };
 
+  const onTouchStart = (event) => {
+    suppressClickUntil.current = 0;
+    touchStart.current = event.touches.length === 1
+      ? {x: event.touches[0].clientX, y: event.touches[0].clientY} : null;
+  };
+
+  const onTouchMove = (event) => {
+    if (!touchStart.current) return;
+    if (event.touches.length !== 1) {
+      touchStart.current = null;
+      return;
+    }
+    const dx = Math.abs(event.touches[0].clientX - touchStart.current.x);
+    const dy = Math.abs(event.touches[0].clientY - touchStart.current.y);
+    if (dy > 10 && dy > dx) touchStart.current = null;
+  };
+
+  const onTouchEnd = (event) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start || event.touches.length || event.changedTouches.length !== 1) return;
+    const dx = event.changedTouches[0].clientX - start.x;
+    const dy = event.changedTouches[0].clientY - start.y;
+    if (Math.abs(dx) < 40 || Math.abs(dx) <= Math.abs(dy) * 1.3) return;
+    suppressClickUntil.current = Date.now() + 500;
+    if (dx < 0) onNext();
+    else onPrevious();
+  };
+
+  const onClickCapture = (event) => {
+    if (Date.now() >= suppressClickUntil.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   return (
     <aside className="AdBanner" aria-label="광고">
-      <div className="AdBanner-viewport">
+      <div className="AdBanner-viewport" onTouchStart={onTouchStart} onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd} onTouchCancel={() => { touchStart.current = null; }} onClickCapture={onClickCapture}>
         <div className="AdBanner-slides">
           <button className="AdBanner-preview AdBanner-preview-previous" type="button" aria-label="이전 광고 보기" onClick={onPrevious}>
             <img className="AdBanner-image" src={ads[(adIndex - 1 + ads.length) % ads.length].image} alt="" />
